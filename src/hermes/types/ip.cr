@@ -1,6 +1,6 @@
 module Hermes
   module Types
-    class IP
+    struct IP
       getter raw
 
       def initialize(@raw)
@@ -8,6 +8,10 @@ module Hermes
 
       def initialize(pull : JSON::PullParser)
         @raw = pull.read_string
+      end
+
+      def to_json(json : JSON::Builder)
+        json.string(@raw)
       end
     end
   end

@@ -1,6 +1,6 @@
 module Hermes
   class Config
-    {% for field in [:host, :port, :schema, :default_index] %}
+    {% for field in [:host, :port, :schema] %}
       @@{{field.id}} = nil
 
       def self.{{field.id}}=(value)
@@ -15,7 +15,6 @@ module Hermes
     @@host = "localhost"
     @@port = 9200
     @@schema = "http"
-    @@default_index : String?
 
     def self.configure
       yield self

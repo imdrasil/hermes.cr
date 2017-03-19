@@ -1,11 +1,15 @@
 module Hermes
   module Types
-    class Circle
+    struct Circle < IGeoShape
       JSON.mapping(
         type: String,
-        coordinates: Array(Float32),
+        coordinates: Array(Float64),
         radius: String
       )
+
+      def initialize(@coordinates, @radius)
+        @type = "circle"
+      end
 
       def r
         @r ||= @radius.gsub(/(\w)*$/, "").to_f

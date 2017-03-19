@@ -3,7 +3,7 @@ require "base64"
 module Hermes
   module Types
     struct Binary
-      getter raw
+      getter raw : String
 
       def initialize(@raw)
       end
@@ -22,6 +22,14 @@ module Hermes
 
       def decode
         Base64.decode(@raw)
+      end
+
+      def decode_string
+        Base64.decode_string(@raw)
+      end
+
+      def to_json(json : JSON::Builder)
+        json.string(@raw)
       end
     end
   end

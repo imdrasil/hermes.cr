@@ -1,10 +1,13 @@
 module Hermes
   module Types
-    class GeoPoint
+    struct GeoPoint
       JSON.mapping(
-        lat: Float32,
-        lon: Float32
+        lat: Float64,
+        lon: Float64
       )
+
+      def initialize(@lat, @lon)
+      end
     end
   end
 end

@@ -1,10 +1,13 @@
 module Hermes
   module Types
-    class Range(T)
+    struct Range(T)
       JSON.mapping(
         lte: T,
         gte: T
       )
+
+      def initialize(@lte, @gte)
+      end
     end
   end
 end

@@ -1,10 +1,14 @@
 module Hermes
   module Types
-    class MultiPolygon
+    struct MultiPolygon < IGeoShape
       JSON.mapping(
         type: String,
-        coordinates: Array(Array(Array(Array(Float32))))
+        coordinates: Array(Array(Array(Array(Float64))))
       )
+
+      def initialize(@coordinates)
+        @type = "multi_polygon"
+      end
     end
   end
 end

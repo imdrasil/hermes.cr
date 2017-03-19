@@ -1,6 +1,14 @@
 module Hermes
   module Types
-    class LineString < MultiPoint
+    struct LineString < IGeoShape
+      JSON.mapping(
+        type: String,
+        coordinates: Array(Array(Float64))
+      )
+
+      def initialize(@coordinates)
+        @type = "line_string"
+      end
     end
   end
 end

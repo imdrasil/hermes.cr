@@ -1,5 +1,6 @@
 module Hermes
-  class Hit(T)
+  # TODO: probably should switch to struct but need to check case with high load
+  struct Hit(T)
     JSON.mapping(
       _index: String,
       _type: String,
@@ -15,9 +16,13 @@ module Hermes
       instance._source._index = instance._index
       instance
     end
+
+    def entry
+      _source
+    end
   end
 
-  class Hits(T)
+  struct Hits(T)
     JSON.mapping(
       total: Int32,
       max_score: Float32?,
@@ -25,7 +30,7 @@ module Hermes
     )
   end
 
-  class SearchResponse(T)
+  struct SearchResponse(T)
     JSON.mapping(
       hits: Hits(T),
       aggregations: {type: Hash(String, JSON::Any), nilable: true}
@@ -37,6 +42,26 @@ module Hermes
 
     def aggs
       @aggregations
+    end
+  end
+
+  struct AggregationResponse
+    JSON.mapping(
+      aggregations: Hash(String, JSON::Any)
+    )
+
+    def aggs
+      @aggregations
+    end
+  end
+
+  struct MultiGetResponse(T)
+    JSON.mapping(
+      docs: Array(Hit(T))
+    )
+
+    def entries
+      @docs.map(&._source)
     end
   end
 end

@@ -1,6 +1,8 @@
 module Hermes
   class Response
-    def initialize(@raw : HTTP::Client::Response)
+    getter raw : HTTP::Client::Response
+
+    def initialize(@raw)
     end
 
     def [](key : String)

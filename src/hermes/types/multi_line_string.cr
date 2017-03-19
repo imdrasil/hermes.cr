@@ -1,10 +1,14 @@
 module Hermes
   module Types
-    class MultiLineString
+    struct MultiLineString < IGeoShape
       JSON.mapping(
         type: String,
-        coordinates: Array(Array(Array(Float32)))
+        coordinates: Array(Array(Array(Float64)))
       )
+
+      def initialize(@coordinates)
+        @type = "multi_line_string"
+      end
     end
   end
 end

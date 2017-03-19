@@ -1,10 +1,14 @@
 module Hermes
   module Types
-    class Point
+    struct Point < IGeoShape
       JSON.mapping(
         type: String,
-        coordinates: Array(Float32)
+        coordinates: Array(Float64)
       )
+
+      def initialize(@coordinates)
+        @type = "point"
+      end
     end
   end
 end

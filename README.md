@@ -36,7 +36,6 @@ Default values:
 | --- | --- |
 | `host` | `"localhost"` |
 | `port`| `9200` |
-| `adapter` | `"mysql"` |
 | `schema` | `"http"` |
 
 ### Command management
@@ -58,14 +57,45 @@ Now you can use next commands:
 $ crystal sam.cr -- es:mapping:update
 ```
 
+- updates configurations of all indexes 
+```shell
+$ crystal sam.cr -- es:index:update_all
+```
+
+- creates all indexes 
+```shell
+$ crystal sam.cr -- es:index:create_all
+```
+
+- updates configuration of provided index 
+```shell
+$ crystal sam.cr -- es:index:update index_name
+```
+
+- creates given index 
+```shell
+$ crystal sam.cr -- es:index:create index_name
+```
+
+- destroy given index 
+```shell
+$ crystal sam.cr -- es:index:destroy index_name
+```
+
+- destroy all indexes 
+```shell
+$ crystal sam.cr -- es:index:destroy_all
+```
+
 ### Index
 
 First of all specify all your indexes. Here is example of some test index:
 
 ```crystal
 class TestIndex < Hermes::Index
-  index_name("test_index")
-  mapping({
+  index_name "test_index"
+
+  config({
     mappings: {
       post: {
         properties: {
@@ -77,25 +107,34 @@ class TestIndex < Hermes::Index
               },
             },
           },
-          user:     {type: "text"},
-          message:  {type: "text"},
-          tag:      {type: "keyword"},
-          time:     {type: "date"},
-          location: {type: "geo_point"},
+          likes:      {type: "integer"},
+          user:       {:type => "text"},
+          text:       {:type => "text"},
+          tag:        {:type => "keyword"},
+          created_at: {:type => "date"},
+        },
+      },
+
+      user: {
+        properties: {
+          full_name: {type: "text"},
+          location:  {type: "geo_point"},
+          photo:     {type: "binary"},
         },
       },
     },
   })
 end
 ```
+> You could use both `NamedTuple` and hash notation
 
-`mapping` macros allowa you specify mappings for all document types. Here regular Elasticsearch options should be used. 
+`config` macros allows you specify configs for index (settings, mappings, etc.). Here regular Elasticsearch options should be used. 
 
-Also using `index_name` methods special index name could be stored. By default underscored class name without last "_index" part is taken.
+Also using `index_name` method custom index name could be stored. By default underscored class name without last "_index" part is taken.
 
 ### Repository
 
-Hermes implements some kind of Datamapper pattern so all CRUD and search logic will be loated inside of repository which allows to separate search logic and domain logic. So regular repository looks like this:
+Hermes implements some kind of Datamapper pattern so all CRUD and search logic will be inside of repository which allows to separate search and domain logic. So regular repository looks like this:
 
 ```crystal
 class PostRepository < Hermes::Repository(TestIndex, Post)
@@ -112,17 +151,27 @@ This is module which includes mapping rules for fields. This allows to mix it in
 class Post
   include Hermes::Persistent
 
-  definition(
+  es_fields(
+    title: String,
+    likes: {type: Int32, default: 0},
     user: String,
-    message: String,
+    text: String,
     tag: {type: String, nilable: true},
-    time: Time | Nil,
-    some_unexisting_field: {type: Int32 | Nil, nilable: true}
+    created_at: Time | Nil,
+    non_existing_field: {type: Int32 | Nil, nilable: true}
   )
 end
 ```
 
-`definition` macros works almost same way as `JSON.mapping` except generating constructor accepting Hash with String keys and `to_hash` method, which returns hash with all atributes from mapping.
+`es_fields` macros works almost same way as `JSON.mapping` except generating several extra methods:
+
+- `#{{attribute_name}}!` - for all given attributes with getters; makes not nil assertion
+- `#initialize(Hash(String, Any))`
+- `#initialize(Hash(Symbol, Any))`
+- `#initialize(**)`
+- `#assign_es_fields(Hash)` - will set all given fields
+- `#assign_es_fields(**)`
+- `#to_hash` - returns hash with all attributes (keys are strings)
 
 #### Data types
 
@@ -132,7 +181,6 @@ All regular Crystal data types, which could be mapped from Elasticsearch data ty
 - range (`Hermes::Types::Range(T)`)
 
  > Due to Elasticsearch documentation there are several supported data types: `Int32`, `Int64`, `Float32` `Float64`, `Time`.
- 
 - IP address (`Hermes::Types::IP`)
 - geometrical
   - geo_point (`Hermes::Types::GeoPoint`)
@@ -155,6 +203,8 @@ New object can be created from Hash (with string keys), NamedTuple or new Persis
 ```crystal
 PostRepository.create({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.now })
 
+PostRepository.create(user: "eddy", message: "some message", tag: "es", time: Time.now )
+
 obj = Post.new({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.now })
 PostRepository.save(obj)
 ```
@@ -162,15 +212,24 @@ PostRepository.save(obj)
 Due to Elasticsearch documentations, new object will be indexed in several seconds. So to do it immediatly you can manualy refresh:
 
 ```crystal
-PostRepository.refresh
+TestIndex.refresh
+# or passing true as second parameter for #save
+
+PostRepository.save(obj, true)
 ```
+
+Such usage could slow down everything.
 
 #### Read
 
 Single document can be retrieved by it's id:
 
 ```crystal
-PostRepository.find("elastic_uid_here")
+PostRepository.find("elastic_uid_here") # object or nil
+PostRepository.find!("elastic_uid_here") # object or exception
+PostRepository.multi_get(["uid1", "uid2"]) # array of found objects by their ids
+PostRepository.all
+
 ```
 
 Also regular Elasticsearch query dsl could be used:
@@ -234,12 +293,33 @@ PostRepository.save(obj)
 Also there is method for `_update` Elasticsearch endpoint:
 
 ```crystal
-PostRepository.update("some_id", { script: {...}})
+PostRepository.update("some_id", { script: {...}}) # allow specify entire request body
+
+PostRepository.update_doc("some_id", {user: "tomas"}) # accepts "doc" part of body 
+
+PostRepository.update_by_script("some_id", {
+  script: {
+    inline: "ctx._source.likes += params.count",
+    lang:   "painless",
+    params: {count: 1},
+  },
+}) # allow specify entire request body
 ```
 
 and `_update_by_query`
 ```crystal
-PostRepository.update_by_query({ script: {...}, query: { term: { user: "kim } })
+PostRepository.update_by_query({
+  script: {
+    inline: "ctx._source.likes += params.count",
+    lang:   "painless",
+    params: {count: 1},
+  },
+  query: {
+    term: {
+      user: "kim",
+    },
+  },
+})
 ```
 
 #### Delete
@@ -256,17 +336,17 @@ PostRepository.delete_by_query({query: {match: {message: "some message"}}})
 ```
 ## Restrictions
 
-Now there is no tests (will be added in next release) so it hardly recomended not to use it for production usage. Also Hermes uses one connection and need to be tested with multithreading (check safety).
+Hermes uses one connection and is needed to be tested with multi-threading (check safety).
 
 ## Development
 
 There are still a lot of work to do. Tasks for next versions:
 
-- [ ] cover with tests
+- [ ] fully cover with tests
 - [ ] add IP related logic to `Hermes::Types::IP` and move it to separate shard (like [ruby-ip](https://github.com/deploy2/ruby-ip))
 - [ ] think about adding smth like [connection pool](https://github.com/ysbaddaden/pool)
 - [ ] add [Jennifer](https://github.com/imdrasil/jennifer.cr) support
-- [ ] add more thinks below...
+- [ ] add more things below...
 
 ## Contributing
 
@@ -278,10 +358,11 @@ There are still a lot of work to do. Tasks for next versions:
 
 Please ask me before start any work on some feature.
 
-Also if you want to use it in your application - ping me please, my email you can find in my profile.
+Also if you want to use it in your application - ping me please, my email could be found in my profile.
 
 To run test use regular `crystal spec`.
 
 ## Contributors
 
 - [imdrasil](https://github.com/imdrasil) Roman Kalnytskyi - creator, maintainer
+s

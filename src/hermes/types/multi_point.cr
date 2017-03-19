@@ -1,10 +1,14 @@
 module Hermes
   module Types
-    class MultiPoint
+    struct MultiPoint < IGeoShape
       JSON.mapping(
         type: String,
-        coordinates: Array(Array(Float32))
+        coordinates: Array(Array(Float64))
       )
+
+      def initialize(@coordinates)
+        @type = "multi_point"
+      end
     end
   end
 end

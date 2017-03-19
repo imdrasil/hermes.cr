@@ -1,29 +1,40 @@
 module Hermes
   module Persistent
+    alias Any = String | Symbol | Time | Float32 | Float64 | Int32 | Int16 | ::Hermes::Types::Binary | ::Hermes::Types::IP | Hermes::Types::GeoPoint | Hermes::Types::IGeoShape | Hermes::Types::GeometryCollection | Hash(String | Symbol, Any)
     property _id = "", _index = "", _type = ""
 
-    macro definition(properties, strict = false)
+    def es_new_record?
+      _id.empty?
+    end
+
+    macro es_fields(properties, strict = false, prefix = "")
       {% for key, value in properties %}
         {% properties[key] = {type: value} unless value.is_a?(HashLiteral) || value.is_a?(NamedTupleLiteral) %}
+        {% properties[key][:name] = "#{prefix.id}#{key.id}" %}
       {% end %}
 
       {% for key, value in properties %}
-        @{{key.id}} : {{value[:type]}} {{ (value[:nilable] ? "?" : "").id }}
+        @{{value[:name].id}} : {{value[:type]}} {{ (value[:nilable] ? "?" : "").id }}
 
         {% if value[:setter] == nil ? true : value[:setter] %}
-          def {{key.id}}=(_{{key.id}} : {{value[:type]}} {{ (value[:nilable] ? "?" : "").id }})
-            @{{key.id}} = _{{key.id}}
+          def {{value[:name].id}}=(_{{key.id}} : {{value[:type]}} {{ (value[:nilable] ? "?" : "").id }})
+            @{{value[:name].id}} = _{{key.id}}
           end
         {% end %}
 
         {% if value[:getter] == nil ? true : value[:getter] %}
-          def {{key.id}}
-            @{{key.id}}
+          def {{value[:name].id}}!
+            @{{value[:name].id}}.not_nil!
+          end
+
+          def {{value[:name].id}}
+            @{{value[:name].id}}
           end
         {% end %}
       {% end %}
 
-      def initialize(hash)
+      def initialize(_hash : Hash(String, Any))
+        hash = Hermes.deep_hash_converting(_hash)
         {% for key, value in properties %}
           {% unless value[:nilable] || value[:default] != nil %}
             if !hash.has_key?("{{key.id}}") && !Union({{value[:type]}}).nilable?
@@ -35,14 +46,63 @@ module Hermes
         {% for key, value in properties %}
           {% if value[:nilable] %}
             {% if value[:default] != nil %}
-              @{{key.id}} = hash.has_key?("{{key.id}}") ? hash["{{key.id}}"] : {{value[:default]}}
+              @{{value[:name].id}} = hash.has_key?("{{key.id}}") ? hash["{{key.id}}"].as({{value[:type]}}) : {{value[:default]}}
             {% else %}
-              @{{key.id}} = hash["{{key.id}}"]?
+              @{{value[:name].id}} = hash["{{key.id}}"]?.as({{value[:type]}})
             {% end %}
           {% elsif value[:default] != nil %}
-            @{{key.id}} = !hash.has_key?("{{key.id}}") ? {{value[:default]}} : hash["{{key.id}}"]
+            @{{value[:name].id}} = !hash.has_key?("{{key.id}}") ? {{value[:default]}} : hash["{{key.id}}"].as({{value[:type]}})
           {% else %}
-            @{{key.id}} = (hash["{{key.id}}"]?).as({{value[:type]}})
+            @{{value[:name].id}} = (hash["{{key.id}}"]?).as({{value[:type]}})
+          {% end %}
+        {% end %}
+      end
+
+      def initialize(_hash : Hash(Symbol, Any))
+        hash = Hermes.deep_hash_converting(_hash)
+        {% for key, value in properties %}
+          {% unless value[:nilable] || value[:default] != nil %}
+            if !hash.has_key?(:{{key.id}}) && !Union({{value[:type]}}).nilable?
+              raise "missing hash attribute: {{(value[:key] || key).id}}"
+            end
+          {% end %}
+        {% end %}
+
+        {% for key, value in properties %}
+          {% if value[:nilable] %}
+            {% if value[:default] != nil %}
+              @{{value[:name].id}} = hash.has_key?(:{{key.id}}) ? hash[:{{key.id}}].as({{value[:type]}}) : {{value[:default]}}
+            {% else %}
+              @{{value[:name].id}} = hash[:{{key.id}}]?.as({{value[:type]}})
+            {% end %}
+          {% elsif value[:default] != nil %}
+            @{{value[:name].id}} = !hash.has_key?(:{{key.id}}) ? {{value[:default]}} : hash[:{{key.id}}].as({{value[:type]}})
+          {% else %}
+            @{{value[:name].id}} = (hash[:{{key.id}}]?).as({{value[:type]}})
+          {% end %}
+        {% end %}
+      end
+
+      def initialize(**hash)
+        {% for key, value in properties %}
+          {% unless value[:nilable] || value[:default] != nil %}
+            if !hash.has_key?(:{{key.id}}) && !Union({{value[:type]}}).nilable?
+              raise "missing hash attribute: {{(value[:key] || key).id}}"
+            end
+          {% end %}
+        {% end %}
+
+        {% for key, value in properties %}
+          {% if value[:nilable] %}
+            {% if value[:default] != nil %}
+              @{{value[:name].id}} = hash.has_key?(:{{key.id}}) ? hash[:{{key.id}}].as({{value[:type]}}) : {{value[:default]}}
+            {% else %}
+              @{{value[:name].id}} = hash[:{{key.id}}]?.as({{value[:type]}})
+            {% end %}
+          {% elsif value[:default] != nil %}
+            @{{value[:name].id}} = !hash.has_key?(:{{key.id}}) ? {{value[:default]}} : hash[:{{key.id}}].as({{value[:type]}})
+          {% else %}
+            @{{value[:name].id}} = (hash[:{{key.id}}]?).as({{value[:type]}})
           {% end %}
         {% end %}
       end
@@ -101,22 +161,40 @@ module Hermes
         {% for key, value in properties %}
           {% if value[:nilable] %}
             {% if value[:default] != nil %}
-              @{{key.id}} = %found{key.id} ? %var{key.id} : {{value[:default]}}
+              @{{value[:name].id}} = %found{key.id} ? %var{key.id} : {{value[:default]}}
             {% else %}
-              @{{key.id}} = %var{key.id}
+              @{{value[:name].id}} = %var{key.id}
             {% end %}
           {% elsif value[:default] != nil %}
-            @{{key.id}} = %var{key.id}.is_a?(Nil) ? {{value[:default]}} : %var{key.id}
+            @{{value[:name].id}} = %var{key.id}.is_a?(Nil) ? {{value[:default]}} : %var{key.id}
           {% else %}
-            @{{key.id}} = (%var{key.id}).as({{value[:type]}})
+            @{{value[:name].id}} = (%var{key.id}).as({{value[:type]}})
           {% end %}
+        {% end %}
+      end
+
+      def assign_es_fields(_hash : Hash)
+        hash = Hermes.deep_hash_converting(_hash)
+        {% for key, value in properties %}
+          if hash.has_key?("{{key.id}}")
+            @{{value[:name].id}} = hash["{{key.id}}"].as({{value[:type]}})
+          end
+        {% end %}
+      end
+
+      def assign_es_fields(**opts)
+        hash = Hermes.deep_hash_converting(opts)
+        {% for key, value in properties %}
+          if hash.has_key?(:{{key.id}})
+            @{{value[:name].id}} = hash[:{{key.id}}].as({{value[:type]}})
+          end
         {% end %}
       end
 
       def to_hash
         {
           {% for key, value in properties %}
-            {{key.stringify}} => @{{key.id}},
+            {{key.stringify}} => @{{value[:name].id}},
           {% end %}
         }
       end
@@ -124,7 +202,7 @@ module Hermes
       def to_json(json : ::JSON::Builder)
         json.object do
         {% for key, value in properties %}
-          _{{key.id}} = @{{key.id}}
+          _{{key.id}} = @{{value[:name].id}}
 
           {% unless value[:emit_null] %}
             unless _{{key.id}}.nil?
@@ -171,8 +249,8 @@ module Hermes
 
     # This is a convenience method to allow invoking `JSON.mapping`
     # with named arguments instead of with a hash/named-tuple literal.
-    macro definition(**properties)
-      definition({{properties}})
+    macro es_fields(**properties)
+      es_fields({{properties}})
     end
   end
 end
