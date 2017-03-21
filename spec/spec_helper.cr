@@ -4,7 +4,7 @@ require "./config"
 require "./factories"
 
 Hermes::Config.configure do |c|
-  # c.default_index = "test_index"
+  #c.host = "127.0.0.1"
 end
 
 Spec.before_each do

@@ -6,7 +6,7 @@ module Hermes
       @http = HTTP::Client.new(URI.new(Config.schema, Config.host, Config.port))
     end
 
-    {% for method in [:get, :post, :put, :delete] %}
+    {% for method in [:get, :post, :put, :delete, :head] %}
       def {{method.id}}(url, headers = nil, body = nil)
         res = @http.{{method.id}}(url, headers, body)
         Response.new(res)

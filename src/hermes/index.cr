@@ -34,6 +34,10 @@ module Hermes
       Hermes.client.post("/#{index_name}/_refresh")
     end
 
+    def self.exists?
+      Hermes.client.head("/#{index_name}").status == 200
+    end
+
     def self.search(hash)
       Hermes.client.get("/#{index_name}/_search", nil, hash.to_json)
     end
