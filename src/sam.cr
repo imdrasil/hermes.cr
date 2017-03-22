@@ -3,12 +3,20 @@ Sam.namespace "es" do
     task "update_all" do
       Hermes::Index::INDEXES.each do |klass|
         klass.update
+        puts "Index #{klass} is updated"
       end
     end
 
     task "create_all" do
       Hermes::Index::INDEXES.each do |klass|
-        klass.create
+        if klass.exists?
+          puts "Index #{klass} is already exists"
+          klass.update.inspect
+          puts "Index #{klass} is updated"
+        else
+          klass.create
+          puts "Index #{klass} is created"
+        end
       end
     end
 
@@ -16,6 +24,7 @@ Sam.namespace "es" do
       k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
       if k
         k.not_nil!.update
+        puts "Index is updated"
       else
         puts "No such index"
       end
@@ -25,6 +34,7 @@ Sam.namespace "es" do
       k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
       if k
         k.not_nil!.create
+        puts "Index is created"
       else
         puts "No such index"
       end
@@ -34,6 +44,7 @@ Sam.namespace "es" do
       k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
       if k
         k.not_nil!.destroy
+        puts "Index is updated"
       else
         puts "No such index"
       end
@@ -42,6 +53,7 @@ Sam.namespace "es" do
     task "destroy_all" do
       Hermes::Index::INDEXES.each do |k|
         k.destroy
+        puts "Index #{k} is destroyed"
       end
     end
   end

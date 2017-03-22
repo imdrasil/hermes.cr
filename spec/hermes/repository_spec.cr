@@ -34,11 +34,13 @@ describe Hermes::Repository do
   describe "::update_by_script" do
     it "correctly updates by given argument using it as script" do
       post = create_post
+      Hermes.refresh
       PostRepository.update_by_script(post._id, {
         inline: "ctx._source.likes += params.count",
         lang:   "painless",
         params: {count: 1},
       })
+      Hermes.refresh
       PostRepository.find!(post._id).likes.should eq(1)
     end
   end
@@ -46,6 +48,7 @@ describe Hermes::Repository do
   describe "::update" do
     it "update given doc by given description" do
       post = create_post
+      Hermes.refresh
       r = PostRepository.update(post._id, {
         script: {
           inline: "ctx._source.likes += params.count",
@@ -53,6 +56,7 @@ describe Hermes::Repository do
           params: {count: 1},
         },
       })
+      Hermes.refresh
       PostRepository.find!(post._id).likes.should eq(1)
     end
   end
