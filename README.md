@@ -1,4 +1,4 @@
-# Hermes [![Build Status](https://travis-ci.org/imdrasil/hermes.cr.svg?branch=master)](https://travis-ci.org/imdrasil/hermes.cr)
+# Hermes [![Build Status](https://travis-ci.org/imdrasil/hermes.cr.svg?branch=master)](https://travis-ci.org/imdrasil/hermes.cr) [![Latest Release](https://img.shields.io/github/release/imdrasil/hermes.cr.svg)](https://github.com/imdrasil/hermes.cr/releases)
 
 This is an integration of Crystal and Elasticsearch via HTTP/HTTPS protocol.
 

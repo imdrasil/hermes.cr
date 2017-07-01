@@ -25,11 +25,11 @@ module Hermes
     @@client ||= Client.new
   end
 
-  def self.search(indexes, types, hash)
+  def self.search(indexes : Array, types : Array, hash)
     client.get("/#{indexes.join(",")}/#{types.join(",")}/_search", nil, hash.to_json)
   end
 
-  def self.search(indexes, hash)
+  def self.search(indexes : Array, hash)
     client.get("/#{indexes.join(",")}/_search", nil, hash.to_json)
   end
 
@@ -37,7 +37,7 @@ module Hermes
     client.get("/_search", nil, hash.to_json)
   end
 
-  def self.bulk(hashes)
+  def self.bulk(hashes : Array)
     body = String.build do |s|
       hashes.each do |hash|
         hash.to_json(s)
