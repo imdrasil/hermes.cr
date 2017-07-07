@@ -1,10 +1,10 @@
 name: hermes.cr
-version: 0.2.0
+version: 0.2.1
 
 authors:
   - Roman Kalnytskyi <moranibaca@gmail.com>
 
-crystal: 0.21.0
+crystal: 0.23.0
 
 license: MIT
 dependencies:
