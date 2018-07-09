@@ -1,12 +1,22 @@
 module Hermes
   module Persistent
     alias Any = String | Symbol | Time | Float32 | Float64 | Int32 | Int16 | ::Hermes::Types::Binary | ::Hermes::Types::IP | Hermes::Types::GeoPoint | Hermes::Types::IGeoShape | Hermes::Types::GeometryCollection | Hash(String | Symbol, Any)
+
     property _id = "", _index = "", _type = ""
 
     def es_new_record?
       _id.empty?
     end
 
+    # Options:
+    # - type
+    # - nilable
+    # - setter
+    # - getter
+    # - default
+    # - converter
+    # - emit_null
+    # - root
     macro es_fields(properties, strict = false, prefix = "")
       {% for key, value in properties %}
         {% properties[key] = {type: value} unless value.is_a?(HashLiteral) || value.is_a?(NamedTupleLiteral) %}
@@ -201,12 +211,12 @@ module Hermes
 
       def to_json(json : ::JSON::Builder)
         json.object do
-        {% for key, value in properties %}
-          _{{key.id}} = @{{value[:name].id}}
+          {% for key, value in properties %}
+            _{{key.id}} = @{{value[:name].id}}
 
-          {% unless value[:emit_null] %}
-            unless _{{key.id}}.nil?
-          {% end %}
+            {% unless value[:emit_null] %}
+              unless _{{key.id}}.nil?
+            {% end %}
 
             json.field({{value[:key] || key.id.stringify}}) do
               {% if value[:root] %}
@@ -219,33 +229,31 @@ module Hermes
                 json.object do
                   json.field({{value[:root]}}) do
               {% end %}
+                    {% if value[:converter] %}
+                      if _{{key.id}}
+                        {{ value[:converter] }}.to_json(_{{key.id}}, json)
+                      else
+                        nil.to_json(json)
+                      end
+                    {% else %}
+                      _{{key.id}}.to_json(json)
+                    {% end %}
 
-              {% if value[:converter] %}
-                if _{{key.id}}
-                  {{ value[:converter] }}.to_json(_{{key.id}}, json)
-                else
-                  nil.to_json(json)
-                end
-              {% else %}
-                _{{key.id}}.to_json(json)
-              {% end %}
-
-              {% if value[:root] %}
-                {% if value[:emit_null] %}
+                    {% if value[:root] %}
+                      {% if value[:emit_null] %}
+                        end
+                      {% end %}
+                        end
+                      end
+                    {% end %}
                   end
-                {% end %}
-                  end
-                end
-              {% end %}
-            end
-
-          {% unless value[:emit_null] %}
-            end
+            {% unless value[:emit_null] %}
+              end
+            {% end %}
           {% end %}
-        {% end %}
+        end
       end
     end
-  end
 
     # This is a convenience method to allow invoking `JSON.mapping`
     # with named arguments instead of with a hash/named-tuple literal.

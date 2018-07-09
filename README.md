@@ -17,6 +17,7 @@ dependencies:
 ### Configuration
 
 Put
+
 ```crystal
 require "hermes"
 ```
@@ -53,36 +54,43 @@ Sam.help
 Now you can use next commands:
 
 - put all mappings to Elasticsearch
+
 ```shell
 $ crystal sam.cr -- es:mapping:update
 ```
 
-- updates configurations of all indexes 
+- updates configurations of all indexes
+
 ```shell
 $ crystal sam.cr -- es:index:update_all
 ```
 
-- creates all indexes 
+- creates all indexes
+
 ```shell
 $ crystal sam.cr -- es:index:create_all
 ```
 
-- updates configuration of provided index 
+- updates configuration of provided index
+
 ```shell
 $ crystal sam.cr -- es:index:update index_name
 ```
 
-- creates given index 
+- creates given index
+
 ```shell
 $ crystal sam.cr -- es:index:create index_name
 ```
 
-- destroy given index 
+- destroy given index
+
 ```shell
 $ crystal sam.cr -- es:index:destroy index_name
 ```
 
-- destroy all indexes 
+- destroy all indexes
+
 ```shell
 $ crystal sam.cr -- es:index:destroy_all
 ```
@@ -126,9 +134,10 @@ class TestIndex < Hermes::Index
   })
 end
 ```
+
 > You could use both `NamedTuple` and hash notation
 
-`config` macros allows you specify configs for index (settings, mappings, etc.). Here regular Elasticsearch options should be used. 
+`config` macros allows you specify configs for index (settings, mappings, etc.). Here regular Elasticsearch options should be used.
 
 Also using `index_name` method custom index name could be stored. By default underscored class name without last "_index" part is taken.
 
@@ -175,7 +184,7 @@ end
 
 #### Data types
 
-All regular Crystal data types, which could be mapped from Elasticsearch data types, are supportd (like `Int32`, `String` or `Times`, or `Array(Int32)`). Also supported all "special" data types:
+All regular Crystal data types, which could be mapped from Elasticsearch data types, are supported (like `Int32`, `String` or `Times`, or `Array(Int32)`). Also supported all "special" data types:
 
 - binary (`Hermes::Types::Binary`)
 - range (`Hermes::Types::Range(T)`)
@@ -229,7 +238,6 @@ PostRepository.find("elastic_uid_here") # object or nil
 PostRepository.find!("elastic_uid_here") # object or exception
 PostRepository.multi_get(["uid1", "uid2"]) # array of found objects by their ids
 PostRepository.all
-
 ```
 
 Also regular Elasticsearch query dsl could be used:
@@ -255,6 +263,7 @@ PostRepository.search({
 It will return `SearchResponse(T)` object (in this case `T` is a `Post`). It provide access to all response data and has shortcuts for search and aggregation results (`entries` and `aggs` methods).
 
 If you need only count of matched objects:
+
 ```crystal
 PostRepository.count({
     query: {
@@ -295,7 +304,7 @@ Also there is method for `_update` Elasticsearch endpoint:
 ```crystal
 PostRepository.update("some_id", { script: {...}}) # allow specify entire request body
 
-PostRepository.update_doc("some_id", {user: "tomas"}) # accepts "doc" part of body 
+PostRepository.update_doc("some_id", {user: "tomas"}) # accepts "doc" part of body
 
 PostRepository.update_by_script("some_id", {
   script: {
@@ -307,6 +316,7 @@ PostRepository.update_by_script("some_id", {
 ```
 
 and `_update_by_query`
+
 ```crystal
 PostRepository.update_by_query({
   script: {
@@ -324,7 +334,8 @@ PostRepository.update_by_query({
 
 #### Delete
 
-To delete object by it's id use: 
+To delete object by it's id use:
+
 ```crystal
 PostRepository.delete(obj._id)
 ```
@@ -334,6 +345,7 @@ Also you can do it using query:
 ```crystal
 PostRepository.delete_by_query({query: {match: {message: "some message"}}})
 ```
+
 ## Restrictions
 
 Hermes uses one connection and is needed to be tested with multi-threading (check safety).
@@ -365,4 +377,3 @@ To run test use regular `crystal spec`.
 ## Contributors
 
 - [imdrasil](https://github.com/imdrasil) Roman Kalnytskyi - creator, maintainer
-s
