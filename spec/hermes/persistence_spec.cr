@@ -16,12 +16,30 @@ describe Hermes::Persistent do
     it "dumps all fields to hash" do
       post = build_post
       hash = post.to_hash
-      hash["title"].should eq(post.title)
-      hash["likes"].should eq(post.likes)
-      hash["user"].should eq(post.user)
-      hash["text"].should eq(post.text)
-      hash["tag"].should eq(post.tag)
-      hash["created_at"].should eq(post.created_at)
+      hash.should eq({
+        "title" => post.title,
+        "likes" => post.likes,
+        "user" => post.user,
+        "text" => post.text,
+        "tag" => post.tag,
+        "created_at" => post.created_at,
+        "non_existing_field" => nil
+      })
+    end
+  end
+
+  describe "#to_json" do
+    it "generates json" do
+      post = build_post
+      hash = post.to_json
+      hash.should eq({
+        "title" => post.title,
+        "likes" => post.likes,
+        "user" => post.user,
+        "text" => post.text,
+        "tag" => post.tag,
+        "created_at" => post.created_at,
+    }.to_json)
     end
   end
 end

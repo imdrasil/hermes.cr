@@ -107,7 +107,7 @@ describe Hermes::Repository do
     end
   end
 
-  describe "::agregate" do
+  describe "::aggregate" do
     it "correctly aggregates" do
       p1 = PostRepository.save(build_post(tag: "search", user: "kim", likes: 2), true)
       p2 = PostRepository.save(build_post(user: "kim", tag: "elastic", likes: 3), true)
@@ -118,6 +118,8 @@ describe Hermes::Repository do
   end
 
   describe "::explain" do
+    pending "add" do
+    end
   end
 
   describe "::find" do
