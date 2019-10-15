@@ -1,12 +1,13 @@
 name: hermes.cr
-version: 0.2.1
+version: 0.2.2
 
 authors:
   - Roman Kalnytskyi <moranibaca@gmail.com>
 
-crystal: 0.25.1
+crystal: 0.31.1
 
 license: MIT
 dependencies:
   sam:
     github: imdrasil/sam.cr
+    version: "~> 0.3.0"
