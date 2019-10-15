@@ -7,7 +7,7 @@ authors:
 crystal: 0.31.1
 
 license: MIT
-dependencies:
+development_dependencies:
   sam:
     github: imdrasil/sam.cr
     version: "~> 0.3.0"
