@@ -168,7 +168,7 @@ describe Hermes::Repository do
 
   describe "::create" do
     it "creates object by given hash" do
-      obj = PostRepository.create({:title => "t1", :user => "kim", :text => "test", :tag => "es", :created_at => Time.now})
+      obj = PostRepository.create({:title => "t1", :user => "kim", :text => "test", :tag => "es", :created_at => Time.local})
       obj.should be_a(Post)
       obj._id.should_not be_nil
       TestIndex.refresh
@@ -195,7 +195,7 @@ describe Hermes::Repository do
     end
 
     it "saves new object and assign new uid" do
-      p = Post.new({:title => "t1", :user => "kim", :text => "test", :tag => "es", :created_at => Time.now})
+      p = Post.new({:title => "t1", :user => "kim", :text => "test", :tag => "es", :created_at => Time.local})
       obj = PostRepository.save(p)
       p._id.should eq(obj._id)
       p._id.should_not be_nil

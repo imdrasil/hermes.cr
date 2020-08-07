@@ -1,5 +1,5 @@
 # TOOD: look to "like" field - default is brocken for hash
-def build_post(title = "some title", user = "eddy", text = "tratata", tag = "es", created_at = Time.new, likes = 0)
+def build_post(title = "some title", user = "eddy", text = "tratata", tag = "es", created_at = Time.local, likes = 0)
   Post.new(title: title, user: user, text: text, tag: tag, created_at: created_at, likes: likes)
 end
 
