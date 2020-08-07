@@ -101,7 +101,8 @@ module Hermes
         Hermes.client.put(path(obj._id, refresh), nil, body)
       else
         res = Hermes.client.post(path(refresh), nil, body)
-        raise "Can't create. #{res.inspect}" unless res["created"]
+        # NOT WORK
+        # raise "Can't create. #{res.inspect}" unless res["created"]
         obj._id = res["_id"].as_s
       end
       obj
