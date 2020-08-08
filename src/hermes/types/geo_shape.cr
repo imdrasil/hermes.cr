@@ -6,10 +6,18 @@ module Hermes
     end
 
     struct GeoShape < IGeoShape
-      JSON.mapping(
-        type: String,
-        coordinates: Array(JSON::Any)
-      )
+      include JSON::Serializable
+
+      @[JSON::Field(key: "type")]
+      property type : String
+
+      @[JSON::Field(key: "coordinates")]
+      property coordinates : Array(JSON::Any)
+
+      # JSON.mapping(
+      #   type: String,
+      #   coordinates: Array(JSON::Any)
+      # )
 
       def initialize(@coordinates)
         @type = "geo_shape"
