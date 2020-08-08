@@ -1,6 +1,6 @@
 module Hermes
   module Persistent
-    alias Any = String | Symbol | Time | Float32 | Float64 | Int32 | Int16 | ::Hermes::Types::Binary | ::Hermes::Types::IP | Hermes::Types::GeoPoint | Hermes::Types::IGeoShape | Hermes::Types::GeometryCollection | Hash(String | Symbol, Any)
+    alias Any = String | Symbol | Time | Float32 | Float64 | Int64 | Int32 | Int16 | ::Hermes::Types::Binary | ::Hermes::Types::IP | Hermes::Types::GeoPoint | Hermes::Types::IGeoShape | Hermes::Types::GeometryCollection | Hash(String | Symbol, Any)
 
     property _id = "", _index = "", _type = ""
 
