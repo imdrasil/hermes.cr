@@ -8,9 +8,9 @@ describe Hermes::Repository do
   end
 
   describe "::document_type" do
-    # it "should return auto name if not specified" do
-    #   UserRepository.document_type.should eq("user")
-    # end
+    it "should return auto name if not specified" do
+      UserRepository.document_type.should eq("user")
+    end
 
     it "returns specified name" do
       PostRepository.document_type.should eq("posts")

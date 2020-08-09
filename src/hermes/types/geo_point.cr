@@ -9,11 +9,6 @@ module Hermes
       @[JSON::Field(key: "lon")]
       property lon : Float64
 
-      # JSON.mapping(
-      #   lat: Float64,
-      #   lon: Float64
-      # )
-
       def initialize(@lat, @lon)
       end
     end

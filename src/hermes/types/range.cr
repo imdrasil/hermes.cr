@@ -8,11 +8,6 @@ module Hermes
       
       @[JSON::Field(key: "gte")]
       property gte : T
-      
-      # JSON.mapping(
-      #   lte: T,
-      #   gte: T
-      # )
 
       def initialize(@lte, @gte)
       end

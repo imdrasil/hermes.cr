@@ -12,12 +12,6 @@ module Hermes
       @[JSON::Field(key: "radius")]
       property radius : String
 
-      # JSON.mapping(
-      #   type: String,
-      #   coordinates: Array(Float64),
-      #   radius: String
-      # )
-
       def initialize(@coordinates, @radius)
         @type = "circle"
       end

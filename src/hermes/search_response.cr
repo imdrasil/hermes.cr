@@ -15,23 +15,6 @@ module Hermes
     @[JSON::Field(key: "_source")]
     @_source : T
 
-    # JSON.mapping(
-    #   _index: String,
-    #   _type: String,
-    #   _id: String,
-    #   _source: T
-    # )
-
-    # def self.new(pull : JSON::PullParser)
-      # instance = Hit(T).allocate
-      # p instance
-      # instance.initialize(pull)
-      # instance._source._id = instance._id
-      # instance._source._type = instance._type
-      # instance._source._index = instance._index
-      # instance
-    # end
-
     def _source
       @_source._id = @_id
       @_source._type = @_type
@@ -49,7 +32,7 @@ module Hermes
     include JSON::Serializable
 
     @[JSON::Field(key: "total")]
-    property total : Int32
+    property total : Int32 | Hash(String, JSON::Any)
 
 
     @[JSON::Field(key: "max_score")]
@@ -57,12 +40,6 @@ module Hermes
 
     @[JSON::Field(key: "hits")]
     property hits : Array(Hit(T))
-
-    # JSON.mapping(
-    #   total: Int32,
-    #   max_score: Float32?,
-    #   hits: Array(Hit(T))
-    # )
   end
 
   struct SearchResponse(T)
@@ -73,10 +50,6 @@ module Hermes
 
     @[JSON::Field(key: "aggregations")]
     property aggregations : Hash(String, JSON::Any)?
-
-    # JSON.mapping(
-    #   hits: Hits(T),
-    #   aggregations: {type: Hash(String, JSON::Any), nilable: true}
 
     def entries
       @hits.hits.map(&._source)
@@ -93,10 +66,6 @@ module Hermes
     @[JSON::Field(key: "aggregations")]
     property aggregations : Hash(String, JSON::Any)
     
-    # JSON.mapping(
-    #   aggregations: Hash(String, JSON::Any)
-    # )
-
     def aggs
       @aggregations
     end
@@ -107,10 +76,6 @@ module Hermes
 
     @[JSON::Field(key: "docs")]
     property docs : Array(Hit(T))
-
-    # JSON.mapping(
-    #   docs: Array(Hit(T))
-    # )
 
     def entries
       @docs.map(&._source)

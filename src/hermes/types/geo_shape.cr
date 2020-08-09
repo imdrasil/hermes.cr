@@ -14,11 +14,6 @@ module Hermes
       @[JSON::Field(key: "coordinates")]
       property coordinates : Array(JSON::Any)
 
-      # JSON.mapping(
-      #   type: String,
-      #   coordinates: Array(JSON::Any)
-      # )
-
       def initialize(@coordinates)
         @type = "geo_shape"
       end

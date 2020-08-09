@@ -9,11 +9,6 @@ module Hermes
       @[JSON::Field(key: "coordinates")]
       property coordinates : Array(Array(Float64))
 
-      # JSON.mapping(
-      #   type: String,
-      #   coordinates: Array(Array(Float64))
-      # )
-
       def initialize(@coordinates)
         @type = "envelope"
       end

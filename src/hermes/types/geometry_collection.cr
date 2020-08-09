@@ -11,11 +11,6 @@ module Hermes
       @[JSON::Field(key: "geometries")]
       property geometries : Array(GeoShape)
 
-      # JSON.mapping(
-      #   type: String,
-      #   geometries: Array(GeoShape)
-      # )
-
       def initialize(@geometries)
         @type = "geometry_collection"
       end
