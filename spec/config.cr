@@ -54,13 +54,18 @@ class TestIndex < Hermes::Index
           created_at: {:type => "date"},
         },
       },
+    },
+  })
+end
 
-      user: {
-        properties: {
-          full_name: {type: "text"},
-          location:  {type: "geo_point"},
-          photo:     {type: "binary"},
-        },
+class TestUserIndex < Hermes::Index
+  index_name "test_user_index"
+  config({
+    user: {
+    properties: {
+      full_name: {type: "text"},
+      location:  {type: "geo_point"},
+      photo:     {type: "binary"},
       },
     },
   })
@@ -85,7 +90,7 @@ class PostRepository < Hermes::Repository(TestIndex, Post)
   document_type "posts"
 end
 
-class UserRepository < Hermes::Repository(TestIndex, User)
+class UserRepository < Hermes::Repository(TestUserIndex, User)
 end
 
 class ShapeRepository < Hermes::Repository(AnotherIndex, Shape)

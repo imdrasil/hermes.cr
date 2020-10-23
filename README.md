@@ -210,11 +210,11 @@ All regular Crystal data types, which could be mapped from Elasticsearch data ty
 New object can be created from Hash (with string keys), NamedTuple or new Persistent object.
 
 ```crystal
-PostRepository.create({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.now })
+PostRepository.create({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.local })
 
-PostRepository.create(user: "eddy", message: "some message", tag: "es", time: Time.now )
+PostRepository.create(user: "eddy", message: "some message", tag: "es", time: Time.local )
 
-obj = Post.new({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.now })
+obj = Post.new({"user" => "kim", "message" => "some message", "tag" => "es", "time" => Time.local })
 PostRepository.save(obj)
 ```
 

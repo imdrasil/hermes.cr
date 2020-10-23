@@ -1,11 +1,16 @@
 module Hermes
   module Types
     struct Circle < IGeoShape
-      JSON.mapping(
-        type: String,
-        coordinates: Array(Float64),
-        radius: String
-      )
+      include JSON::Serializable
+
+      @[JSON::Field(key: "type")]
+      property type : String
+
+      @[JSON::Field(key: "coordinates")]
+      property coordinates : Array(Float64)
+      
+      @[JSON::Field(key: "radius")]
+      property radius : String
 
       def initialize(@coordinates, @radius)
         @type = "circle"

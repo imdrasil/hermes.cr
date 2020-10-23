@@ -1,6 +1,6 @@
 module Hermes
   class Index
-    alias OptionValue = String | Symbol | Int32 | Float32 | Float64 | Time | Hash(Symbol | String, OptionValue)
+    alias OptionValue = String | Symbol | Int32 | Int64 | Float32 | Float64 | Time | Hash(Symbol | String, OptionValue)
 
     @@config = {} of Symbol | String => OptionValue
 

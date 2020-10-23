@@ -11,7 +11,7 @@ describe Hermes do
           tag:        "wow",
           user:       "kim",
           text:       "tralala",
-          created_at: Time.now,
+          created_at: Time.local,
         },
         {index: {_index: "test_index", _type: "posts"}},
         {
@@ -20,7 +20,7 @@ describe Hermes do
           tag:        "wow",
           user:       "eddy",
           text:       "tralala",
-          created_at: Time.now,
+          created_at: Time.local,
         },
       ])
       TestIndex.refresh
