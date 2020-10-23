@@ -6,7 +6,7 @@ module Hermes
       @headers = HTTP::Headers.new
       @headers.add("Accept", "application/json")
       @headers.add("Content-Type", "application/json")
-      
+
       @http = HTTP::Client.new(URI.new(Config.schema, Config.host, Config.port))
     end
 
@@ -16,7 +16,7 @@ module Hermes
         Response.new(res)
       end
     {% end %}
-    
+
     {% for method in [:get, :post, :put, :delete] %}
       def {{method.id}}!(url, headers = nil, body = nil)
         res = @http.{{method.id}}(url, @headers, body)

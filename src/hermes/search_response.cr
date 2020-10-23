@@ -19,7 +19,7 @@ module Hermes
       @_source._id = @_id
       @_source._type = @_type
       @_source._index = @_index
-      
+
       @_source
     end
 
@@ -65,7 +65,7 @@ module Hermes
 
     @[JSON::Field(key: "aggregations")]
     property aggregations : Hash(String, JSON::Any)
-    
+
     def aggs
       @aggregations
     end

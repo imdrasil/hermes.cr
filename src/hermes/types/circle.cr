@@ -8,7 +8,7 @@ module Hermes
 
       @[JSON::Field(key: "coordinates")]
       property coordinates : Array(Float64)
-      
+
       @[JSON::Field(key: "radius")]
       property radius : String
 

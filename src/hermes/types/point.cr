@@ -8,7 +8,7 @@ module Hermes
 
       @[JSON::Field(key: "coordinates")]
       property coordinates : Array(Float64)
-      
+
       def initialize(@coordinates)
         @type = "point"
       end

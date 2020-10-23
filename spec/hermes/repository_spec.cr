@@ -49,7 +49,7 @@ describe Hermes::Repository do
     it "update given doc by given description" do
       post = create_post
       Hermes.refresh
-      r = PostRepository.update(post._id, {
+      PostRepository.update(post._id, {
         script: {
           inline: "ctx._source.likes += params.count",
           lang:   "painless",
@@ -85,8 +85,8 @@ describe Hermes::Repository do
 
   describe "::search" do
     it "correctly searches by given query" do
-      p1 = PostRepository.save(build_post(tag: "search", user: "kim"), true)
-      p2 = PostRepository.save(build_post(user: "kim", tag: "elastic"), true)
+      PostRepository.save(build_post(tag: "search", user: "kim"), true)
+      PostRepository.save(build_post(user: "kim", tag: "elastic"), true)
       PostRepository.save(build_post(user: "eddy", tag: "elastic"), true)
       r = PostRepository.search({
         query: {
@@ -109,8 +109,8 @@ describe Hermes::Repository do
 
   describe "::aggregate" do
     it "correctly aggregates" do
-      p1 = PostRepository.save(build_post(tag: "search", user: "kim", likes: 2), true)
-      p2 = PostRepository.save(build_post(user: "kim", tag: "elastic", likes: 3), true)
+      PostRepository.save(build_post(tag: "search", user: "kim", likes: 2), true)
+      PostRepository.save(build_post(user: "kim", tag: "elastic", likes: 3), true)
       r = PostRepository.aggregate({total_likes: {sum: {field: "likes"}}})
 
       r.aggs["total_likes"]["value"].should eq(5)
@@ -178,8 +178,8 @@ describe Hermes::Repository do
 
   describe "::count" do
     it "counts objects by given query" do
-      post1 = create_post(user: "kim")
-      post2 = create_post(user: "eddy")
+      create_post(user: "kim")
+      create_post(user: "eddy")
       TestIndex.refresh
       PostRepository.count({query: {term: {user: "kim"}}}).should eq(1)
     end
@@ -205,7 +205,7 @@ describe Hermes::Repository do
   describe "::multi_get" do
     it "returns array of retrieved objects" do
       post1 = create_post(user: "kim")
-      post2 = create_post(user: "yao")
+      create_post(user: "yao")
       post3 = create_post(user: "eddy")
       TestIndex.refresh
       res = PostRepository.multi_get([post1._id, post3._id])
@@ -215,9 +215,9 @@ describe Hermes::Repository do
 
   describe "::all" do
     it "retrieves all" do
-      post1 = create_post(user: "kim")
-      post2 = create_post(user: "yao")
-      post3 = create_post(user: "eddy")
+      create_post(user: "kim")
+      create_post(user: "yao")
+      create_post(user: "eddy")
       TestIndex.refresh
       PostRepository.all.entries.size.should eq(3)
     end
