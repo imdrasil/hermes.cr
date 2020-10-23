@@ -20,30 +20,30 @@ Sam.namespace "es" do
       end
     end
 
-    task "update" do |t, args|
-      k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
-      if k
-        k.not_nil!.update
+    task "update" do |_, args|
+      klass = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
+      if klass
+        klass.not_nil!.update
         puts "Index is updated"
       else
         puts "No such index"
       end
     end
 
-    task "create" do |t, args|
-      k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
-      if k
-        k.not_nil!.create
+    task "create" do |_, args|
+      klass = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
+      if klass
+        klass.not_nil!.create
         puts "Index is created"
       else
         puts "No such index"
       end
     end
 
-    task "destroy" do |t, args|
-      k = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
-      if k
-        k.not_nil!.destroy
+    task "destroy" do |_, args|
+      klass = Hermes::Index::INDEXES.find { |k| k.index_name == args[0].as(String) }
+      if klass
+        klass.not_nil!.destroy
         puts "Index is updated"
       else
         puts "No such index"
@@ -59,11 +59,11 @@ Sam.namespace "es" do
   end
 
   namespace "alias" do
-    task "add" do |t, args|
+    task "add" do |_, args|
       Hermes::Cluster.add_alias(args[0].as(String), args[1].as(String))
     end
 
-    task "remove" do |t, args|
+    task "remove" do |_, args|
       Hermes::Cluster.remove_alias(args[0].as(String), args[1].as(String))
     end
   end

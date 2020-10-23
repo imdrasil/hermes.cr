@@ -1,13 +1,16 @@
 name: hermes
-version: 0.2.2
+version: 0.3.0
 
 authors:
   - Roman Kalnytskyi <moranibaca@gmail.com>
 
-crystal: 0.31.1
+crystal: 0.35.1
 
 license: MIT
 development_dependencies:
   sam:
     github: imdrasil/sam.cr
     version: "~> 0.3.0"
+  ameba:
+    github: crystal-ameba/ameba
+    version: "= 0.12.1"

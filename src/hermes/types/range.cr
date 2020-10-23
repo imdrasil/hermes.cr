@@ -5,7 +5,7 @@ module Hermes
 
       @[JSON::Field(key: "lte")]
       property lte : T
-      
+
       @[JSON::Field(key: "gte")]
       property gte : T
 

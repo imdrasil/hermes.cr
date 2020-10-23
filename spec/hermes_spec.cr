@@ -3,7 +3,7 @@ require "./spec_helper"
 describe Hermes do
   describe "::bulk" do
     it "loads all to es" do
-      r = Hermes.bulk([
+      Hermes.bulk([
         {index: {_index: "test_index", _type: "posts"}},
         {
           title:      "test t3",

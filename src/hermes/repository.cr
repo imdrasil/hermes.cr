@@ -97,7 +97,7 @@ module Hermes
 
     def self.save(obj : Persistent, refresh = false)
       body = obj.to_json
-      unless obj.es_new_record?
+      if !obj.es_new_record?
         Hermes.client.put(path(obj._id, refresh), nil, body)
       else
         res = Hermes.client.post(path(refresh), nil, body)
