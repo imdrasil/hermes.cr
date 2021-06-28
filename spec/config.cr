@@ -62,10 +62,10 @@ class TestUserIndex < Hermes::Index
   index_name "test_user_index"
   config({
     user: {
-    properties: {
-      full_name: {type: "text"},
-      location:  {type: "geo_point"},
-      photo:     {type: "binary"},
+      properties: {
+        full_name: {type: "text"},
+        location:  {type: "geo_point"},
+        photo:     {type: "binary"},
       },
     },
   })
