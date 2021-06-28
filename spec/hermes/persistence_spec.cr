@@ -17,13 +17,13 @@ describe Hermes::Persistent do
       post = build_post
       hash = post.to_hash
       hash.should eq({
-        "title" => post.title,
-        "likes" => post.likes,
-        "user" => post.user,
-        "text" => post.text,
-        "tag" => post.tag,
-        "created_at" => post.created_at,
-        "non_existing_field" => nil
+        "title"              => post.title,
+        "likes"              => post.likes,
+        "user"               => post.user,
+        "text"               => post.text,
+        "tag"                => post.tag,
+        "created_at"         => post.created_at,
+        "non_existing_field" => nil,
       })
     end
   end
@@ -33,13 +33,13 @@ describe Hermes::Persistent do
       post = build_post
       hash = post.to_json
       hash.should eq({
-        "title" => post.title,
-        "likes" => post.likes,
-        "user" => post.user,
-        "text" => post.text,
-        "tag" => post.tag,
+        "title"      => post.title,
+        "likes"      => post.likes,
+        "user"       => post.user,
+        "text"       => post.text,
+        "tag"        => post.tag,
         "created_at" => post.created_at,
-    }.to_json)
+      }.to_json)
     end
   end
 end

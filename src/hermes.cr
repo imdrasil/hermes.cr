@@ -13,7 +13,7 @@ require "./hermes/client"
 require "./hermes/*"
 
 module Hermes
-  VERSION = "0.3.0"
+  VERSION = "0.3.1"
 
   def self.status
     client.get("/")

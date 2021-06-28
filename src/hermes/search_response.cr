@@ -34,7 +34,6 @@ module Hermes
     @[JSON::Field(key: "total")]
     property total : Int32 | Hash(String, JSON::Any)
 
-
     @[JSON::Field(key: "max_score")]
     property max_score : Float32?
 
